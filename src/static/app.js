@@ -1,8 +1,47 @@
 document.addEventListener("DOMContentLoaded", () => {
   const activitiesList = document.getElementById("activities-list");
+  const userActivitiesList = document.getElementById("user-activities-list");
   const activitySelect = document.getElementById("activity");
   const signupForm = document.getElementById("signup-form");
   const messageDiv = document.getElementById("message");
+  const searchUserForm = document.getElementById("search-user-form");
+  const searchUserEmail = document.getElementById("search-user-email");
+  // Função para buscar atividades por e-mail
+  async function fetchUserActivities(email) {
+    userActivitiesList.innerHTML = "<p>Buscando atividades...</p>";
+    userActivitiesList.classList.remove("hidden");
+    try {
+      const response = await fetch(`/activities/by-user/${encodeURIComponent(email)}`);
+      const data = await response.json();
+      if (data.activities && data.activities.length > 0) {
+        userActivitiesList.innerHTML = `<h4>Atividades de ${email}</h4>` +
+          data.activities.map(act => `
+            <div class="activity-card">
+              <h5>${act.name}</h5>
+              <p>${act.description}</p>
+              <p><strong>Horário:</strong> ${act.schedule}</p>
+              <p><strong>Status:</strong> ${act.status}</p>
+            </div>
+          `).join("");
+      } else {
+        userActivitiesList.innerHTML = `<p>Nenhuma atividade encontrada para <b>${email}</b>.</p>`;
+      }
+    } catch (error) {
+      userActivitiesList.innerHTML = `<p>Erro ao buscar atividades para <b>${email}</b>.</p>`;
+      console.error("Erro na busca de atividades por usuário:", error);
+    }
+  }
+
+  // Evento do formulário de busca
+  if (searchUserForm) {
+    searchUserForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const email = searchUserEmail.value.trim();
+      if (email) {
+        fetchUserActivities(email);
+      }
+    });
+  }
 
   // Function to fetch activities from API
   async function fetchActivities() {

@@ -110,6 +110,7 @@ def signup_for_activity(activity_name: str, email: str):
     return {"message": f"Signed up {email} for {activity_name}"}
 
 
+
 @app.delete("/activities/{activity_name}/unregister")
 def unregister_from_activity(activity_name: str, email: str):
     """Unregister a student from an activity"""
@@ -130,3 +131,19 @@ def unregister_from_activity(activity_name: str, email: str):
     # Remove student
     activity["participants"].remove(email)
     return {"message": f"Unregistered {email} from {activity_name}"}
+
+
+# Novo endpoint: Buscar atividades por e-mail
+@app.get("/activities/by-user/{email}")
+def get_activities_by_user(email: str):
+    """Retorna todas as atividades em que o usuário (e-mail) está inscrito."""
+    user_activities = []
+    for name, data in activities.items():
+        if email in data["participants"]:
+            user_activities.append({
+                "name": name,
+                "description": data["description"],
+                "schedule": data["schedule"],
+                "status": f"{len(data['participants'])}/{data['max_participants']} inscritos"
+            })
+    return {"email": email, "activities": user_activities}

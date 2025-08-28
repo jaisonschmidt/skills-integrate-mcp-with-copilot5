@@ -13,8 +13,15 @@
     </header>
 
     <main>
+
       <section id="activities-container">
         <h3>Available Activities</h3>
+        <form id="search-user-form" style="margin-bottom: 1em;">
+          <label for="search-user-email">Buscar atividades por e-mail:</label>
+          <input type="email" id="search-user-email" placeholder="exemplo@mergington.edu" required />
+          <button type="submit">Buscar</button>
+        </form>
+        <div id="user-activities-list" class="hidden"></div>
         <div id="activities-list">
           <!-- Activities will be loaded here -->
           <p>Loading activities...</p>
